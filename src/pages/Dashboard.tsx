@@ -12,6 +12,7 @@ import {
   Coins,
   Timer
 } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 // Mock data
 const mockStats = [
@@ -47,6 +48,16 @@ const mockStats = [
     trend: "up" as const,
     trendValue: "+3 this month"
   }
+];
+
+const mockActivityData = [
+  { date: "Jan 14", transactions: 12, gasUsed: 2.1, volume: 15000 },
+  { date: "Jan 15", transactions: 8, gasUsed: 1.8, volume: 12000 },
+  { date: "Jan 16", transactions: 15, gasUsed: 2.8, volume: 18500 },
+  { date: "Jan 17", transactions: 6, gasUsed: 1.2, volume: 8500 },
+  { date: "Jan 18", transactions: 11, gasUsed: 2.3, volume: 14200 },
+  { date: "Jan 19", transactions: 18, gasUsed: 3.2, volume: 22000 },
+  { date: "Jan 20", transactions: 14, gasUsed: 2.6, volume: 17800 }
 ];
 
 const mockTransactions = [
@@ -138,12 +149,50 @@ export const Dashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64 flex items-center justify-center bg-muted/20 rounded-lg">
-                <div className="text-center text-muted-foreground">
-                  <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Interactive charts coming soon</p>
-                  <p className="text-sm">Transaction volume and gas usage trends</p>
-                </div>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={mockActivityData}>
+                    <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                    <XAxis 
+                      dataKey="date" 
+                      fontSize={12}
+                      tickMargin={8}
+                      className="text-muted-foreground"
+                    />
+                    <YAxis 
+                      fontSize={12}
+                      tickMargin={8}
+                      className="text-muted-foreground"
+                    />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--card))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '6px',
+                        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                      }}
+                      labelStyle={{ color: 'hsl(var(--foreground))' }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="transactions" 
+                      stroke="hsl(var(--primary))" 
+                      strokeWidth={2}
+                      dot={{ fill: 'hsl(var(--primary))', strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6, stroke: 'hsl(var(--primary))', strokeWidth: 2 }}
+                      name="Transactions"
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="gasUsed" 
+                      stroke="hsl(var(--accent))" 
+                      strokeWidth={2}
+                      dot={{ fill: 'hsl(var(--accent))', strokeWidth: 2, r: 4 }}
+                      activeDot={{ r: 6, stroke: 'hsl(var(--accent))', strokeWidth: 2 }}
+                      name="Gas Used (ETH)"
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>

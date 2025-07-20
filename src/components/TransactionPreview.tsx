@@ -23,14 +23,14 @@ export const TransactionPreview = ({
   isLoading = false
 }: TransactionPreviewProps) => {
   return (
-    <Card className="gradient-card border-primary/20 shadow-lg">
-      <CardHeader>
-        <div className="flex items-center justify-between">
+    <Card className="gradient-card border-primary/20 shadow-lg w-full max-w-md mx-auto">
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between gap-2">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-success" />
-            Transaction Preview
+            <CheckCircle className="h-5 w-5 text-success shrink-0" />
+            <span className="leading-tight">Transaction Preview</span>
           </CardTitle>
-          <Badge variant="outline" className="text-primary border-primary/50">
+          <Badge variant="outline" className="text-primary border-primary/50 text-xs">
             BlockDAG Testnet
           </Badge>
         </div>
@@ -40,16 +40,17 @@ export const TransactionPreview = ({
         <div className="space-y-3">
           <div>
             <label className="text-sm font-medium text-muted-foreground">Function</label>
-            <p className="text-sm font-mono bg-muted p-2 rounded">{functionName}</p>
+            <p className="text-sm font-mono bg-muted p-2 rounded mt-1 break-all">{functionName}</p>
           </div>
           
           <div>
             <label className="text-sm font-medium text-muted-foreground">Contract</label>
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-mono bg-muted p-2 rounded flex-1">
-                {contractAddress.slice(0, 6)}...{contractAddress.slice(-4)}
+            <div className="flex items-center gap-2 mt-1">
+              <p className="text-sm font-mono bg-muted p-2 rounded flex-1 break-all">
+                <span className="sm:hidden">{contractAddress.slice(0, 8)}...{contractAddress.slice(-6)}</span>
+                <span className="hidden sm:inline">{contractAddress.slice(0, 10)}...{contractAddress.slice(-8)}</span>
               </p>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
                 <ExternalLink className="h-3 w-3" />
               </Button>
             </div>
@@ -57,11 +58,11 @@ export const TransactionPreview = ({
 
           <div>
             <label className="text-sm font-medium text-muted-foreground">Parameters</label>
-            <div className="bg-muted p-3 rounded space-y-1">
+            <div className="bg-muted p-3 rounded mt-1 space-y-2">
               {Object.entries(parameters).map(([key, value]) => (
-                <div key={key} className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{key}:</span>
-                  <span className="font-mono">{String(value)}</span>
+                <div key={key} className="flex flex-col sm:flex-row sm:justify-between text-sm gap-1">
+                  <span className="text-muted-foreground font-medium">{key}:</span>
+                  <span className="font-mono break-all text-foreground">{String(value)}</span>
                 </div>
               ))}
             </div>
@@ -69,13 +70,13 @@ export const TransactionPreview = ({
 
           <div>
             <label className="text-sm font-medium text-muted-foreground">Estimated Gas</label>
-            <p className="text-sm bg-muted p-2 rounded">{estimatedGas}</p>
+            <p className="text-sm bg-muted p-2 rounded mt-1">{estimatedGas}</p>
           </div>
         </div>
 
         {/* Warning */}
         <div className="flex items-start gap-2 p-3 bg-warning/10 border border-warning/20 rounded-lg">
-          <AlertTriangle className="h-4 w-4 text-warning mt-0.5" />
+          <AlertTriangle className="h-4 w-4 text-warning mt-0.5 shrink-0" />
           <div className="text-sm">
             <p className="font-medium text-warning">Review Carefully</p>
             <p className="text-muted-foreground">
@@ -85,12 +86,12 @@ export const TransactionPreview = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3 pt-2">
+        <div className="flex flex-col sm:flex-row gap-3 pt-2">
           <Button
             variant="outline"
             onClick={onReject}
             disabled={isLoading}
-            className="flex-1"
+            className="flex-1 order-2 sm:order-1"
           >
             Reject
           </Button>
@@ -98,7 +99,7 @@ export const TransactionPreview = ({
             variant="success"
             onClick={onConfirm}
             disabled={isLoading}
-            className="flex-1"
+            className="flex-1 order-1 sm:order-2"
           >
             {isLoading ? (
               <>

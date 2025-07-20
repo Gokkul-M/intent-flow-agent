@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send, Mic, MicOff } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -11,6 +12,45 @@ interface ChatInputProps {
 export const ChatInput = ({ onSendMessage, isLoading = false }: ChatInputProps) => {
   const [message, setMessage] = useState("");
   const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // Initialize Web Speech API
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.lang = 'en-US';
+
+      recognitionRef.current.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setMessage(transcript);
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+        toast({
+          title: "Voice Input Error",
+          description: "Could not access microphone. Please try typing instead.",
+          variant: "destructive"
+        });
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, [toast]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,13 +61,21 @@ export const ChatInput = ({ onSendMessage, isLoading = false }: ChatInputProps) 
   };
 
   const toggleVoiceInput = () => {
-    setIsListening(!isListening);
-    // Voice input simulation
-    if (!isListening) {
-      setTimeout(() => {
-        setMessage("Swap 100 USDC for ETH on Uniswap");
-        setIsListening(false);
-      }, 2000);
+    if (!recognitionRef.current) {
+      toast({
+        title: "Voice Input Not Supported",
+        description: "Your browser doesn't support voice input. Please try typing instead.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      setIsListening(true);
+      recognitionRef.current.start();
     }
   };
 

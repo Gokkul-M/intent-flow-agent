@@ -9,7 +9,10 @@ interface MessageBubbleProps {
 
 export const MessageBubble = ({ message, isUser, timestamp }: MessageBubbleProps) => {
   return (
-    <div className={cn("flex gap-3 p-4", isUser ? "flex-row-reverse" : "flex-row")}>
+    <div className={cn(
+      "flex gap-3 p-2 sm:p-4 animate-fade-in", 
+      isUser ? "flex-row-reverse" : "flex-row"
+    )}>
       {/* Avatar */}
       <div className={cn(
         "flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-full",
@@ -19,16 +22,19 @@ export const MessageBubble = ({ message, isUser, timestamp }: MessageBubbleProps
       </div>
 
       {/* Message Content */}
-      <div className={cn("flex flex-col space-y-2 max-w-xs lg:max-w-md", isUser && "items-end")}>
+      <div className={cn(
+        "flex flex-col space-y-2 max-w-[280px] sm:max-w-xs lg:max-w-md", 
+        isUser && "items-end"
+      )}>
         <div className={cn(
-          "rounded-lg px-3 py-2 text-sm",
+          "rounded-lg px-3 py-2 text-sm break-words",
           isUser 
             ? "chat-bubble-user" 
             : "chat-bubble-ai"
         )}>
-          <p className="whitespace-pre-wrap">{message}</p>
+          <p className="whitespace-pre-wrap leading-relaxed">{message}</p>
         </div>
-        <span className="text-xs text-muted-foreground">
+        <span className="text-xs text-muted-foreground px-1">
           {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </span>
       </div>
